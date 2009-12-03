@@ -1103,7 +1103,7 @@
       if($.browser.msie) self.elements.wrapper.add(self.elements.content).css({ zoom: 1 });
 
       // Setup tooltip attributes
-      if(self.options.hide.when.event.search(/unfocus/i)) self.elements.tooltip.attr('unfocus', true);
+      if(self.options.hide.when.event.search(/unfocus/i) || self.options.hide.when.event == 'unfocus') self.elements.tooltip.attr('unfocus', true);
 
       // If an explicit width is set, updateWidth prior to setting content to prevent dirty rendering
       if(typeof self.options.style.width.value == 'number') self.updateWidth();
