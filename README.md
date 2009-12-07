@@ -10,6 +10,7 @@ Here are the changes I have made:
 12-7-2009
 
 * Integrated Craig's image preload function into this version of the script. Note: Script now requires the jquery.preload.js plugin.
+* Added minified version of the script which includes the preload plugin.
 
 12-4-2009
 
