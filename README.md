@@ -7,7 +7,13 @@ original qtip 1.0.0-rc3
 
 Here are the changes I have made:
 
-* Added Craigs opacity fix for to the afterShow function to prevent the tip opacity being set wrong when tip drawing is interrupted.
+12-7-2009
+
+* Integrated Craig's image preload function into this version of the script. Note: Script now requires the jquery.preload.js plugin.
+
+12-4-2009
+
+* Added Craig's opacity fix for to the afterShow function to prevent the tip opacity being set wrong when tip drawing is interrupted.
 * Raised the base z-index to a higher number to prevent z-index conflicts.
 * Added functionality so that unfocus can be used with other hide actions, i.e.
 

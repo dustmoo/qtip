@@ -797,16 +797,23 @@
             else self.elements.content.html(content);
 
             // Check if images need to be loaded before position is updated to prevent mis-positioning
-            images = self.elements.content.find('img[complete=false]');
-            if(images.length > 0)
-            {
-               loadedImages = 0;
-               images.each(function(i)
-               {
-                  $('<img src="'+ $(this).attr('src') +'" />')
-                     .load(function(){ if(++loadedImages == images.length) afterLoad(); });
-               });
-            }
+            loadedImages = 0; images = self.elements.content.find('img');
+			if(images.length)
+			{
+				if($.fn.qtip.preload)
+				{
+					images.each(function()
+					{
+						// Use preloaded image dimensions to prevent incorrect positioning
+						preloaded = $('body > img[src="'+$(this).attr('src')+'"]:first');
+						if(preloaded.length > 0) $(this).attr('width', preloaded.innerWidth()).attr('height', preloaded.innerHeight());
+					});
+					afterLoad();
+				}
+
+				// Make sure all iamges are loaded before proceeding with position update
+				else images.bind('load error', function() { if(++loadedImages === images.length) afterLoad(); });
+			}
             else afterLoad();
 
             function afterLoad()
