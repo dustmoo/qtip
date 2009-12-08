@@ -5,7 +5,7 @@ http://craigsworks.com/projects/qtip/
 Craig is also working on a new version featuring jQuery UI styling integration and other enhancements. This is NOT that version, but a fork of the
 original qtip 1.0.0-rc3
 
----Installation---
+Installation
 
 This script requires jQuery 1.3.2 which is not included in this package.
 
@@ -24,8 +24,7 @@ Or you can include the uncompressed version along with the preload plugin:
 
 The compressed version contains the preload script just to keep your js calls to a minimum.
 
-
----Changelog---
+Changelog
 
 12-8-2009
 
