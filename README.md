@@ -5,7 +5,27 @@ http://craigsworks.com/projects/qtip/
 Craig is also working on a new version featuring jQuery UI styling integration and other enhancements. This is NOT that version, but a fork of the
 original qtip 1.0.0-rc3
 
-Here are the changes I have made:
+Installation
+
+This script requires jQuery 1.3.2 which is not included in this package.
+
+It is available here:
+
+http://docs.jquery.com/Downloading_jQuery
+
+You can either include the minified version of the script in your site using:
+
+		<script src="jquery.qtip-1.0.0-rc3-dm-min.js" type="text/javascript"></script>
+
+Or you can include the uncompressed version along with the preload plugin:
+
+		<script src="jquery.qtip-1.0.0-rc3-dm.js" type="text/javascript"></script>
+		<script src="jquery.qtip.preload.js" type="text/javascript"></script>
+
+The compressed version contains the preload script just to keep your js calls to a minimum.
+
+
+Changelog:
 
 12-8-2009
 
