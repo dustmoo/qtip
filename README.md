@@ -1,3 +1,6 @@
+Info
+-----
+
 This is a fork of Craig Thomson's jQuery plugin qTip. Original version available at:
 
 http://craigsworks.com/projects/qtip/
