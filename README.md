@@ -7,6 +7,16 @@ original qtip 1.0.0-rc3
 
 Here are the changes I have made:
 
+12-8-2009
+
+* Fixed a bug, where the script was not accepting:
+
+		position: { adjust: { scroll: false } }
+	or
+		position: { adjust: { resize: false } }
+	These options now work correctly.
+		
+
 12-7-2009
 
 * Integrated Craig's image preload function into this version of the script. Note: Script now requires the jquery.preload.js plugin.
