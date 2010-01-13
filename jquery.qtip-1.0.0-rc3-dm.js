@@ -285,6 +285,7 @@
                      break;
                   default:
                      self.elements.tooltip.show(null, afterShow);
+					 self.elements.tooltip.css({ opacity: '' });
                      break;
                };
 
