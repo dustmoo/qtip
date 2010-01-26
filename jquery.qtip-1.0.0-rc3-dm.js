@@ -1017,7 +1017,7 @@
                      if(interfaces[i].id == self.id) interfaces.splice(i, 1)
                }
             }
-            delete $.fn.qtip.interfaces[self.id];
+            $.fn.qtip.interfaces.splice(self.id, 1);
 
             // Set qTip current id to previous tooltips API if available
             if(typeof interfaces == 'object' && interfaces.length > 0)
