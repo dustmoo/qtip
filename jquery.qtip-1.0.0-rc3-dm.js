@@ -643,23 +643,20 @@
 						self.elements.tooltip.css({ width: 'auto' });
 						hidden.hide();
 
-						// Set the new calculated width and if width has not numerical, grab new pixel width
-						tooltip.width(newWidth);
-
 						// Set position and zoom to defaults to prevent IE hasLayout bug
 						if($.browser.msie){
 							self.elements.wrapper.add(self.elements.contentWrapper.children()).css({ zoom: 'normal' });
 						}
 
-						// Set the new width
+						// Find current width
 						newWidth = self.getDimensions().width + 1;
 
 						// Make sure its within the maximum and minimum width boundries
 						if(!self.options.style.width.value) {
 							newWidth = Math.min( Math.max(newWidth, min), max );
-						};
-					};
-				};
+						}
+					}
+				}
 
 				// Adjust newWidth by 1px if width is odd (IE6 rounding bug fix)
 				if(newWidth % 2){ newWidth -= 1; }
@@ -1291,7 +1288,7 @@
 	// Create tip using canvas and VML
 	function createTip(corner)
 	{
-		var self, color, coordinates, coordsize, path;
+		var self, color, coordinates, coordsize, path, tip;
 		self = this;
 
 		// Destroy previous tip, if there is one
@@ -1308,11 +1305,14 @@
 		// Create tip element
 		self.elements.tip =  '<div class="'+self.options.style.classes.tip+'" dir="ltr" rel="'+corner+'" style="position:absolute; ' +
 			'height:'+self.options.style.tip.size.height+'px; width:'+self.options.style.tip.size.width+'px; ' +
-			'margin:0 auto; line-height:0.1px; font-size:1px;">';
+			'margin:0 auto; line-height:0.1px; font-size:1px;"></div>';
+
+		// Attach new tip to tooltip element
+		self.elements.tooltip.prepend(self.elements.tip + '</div>');
 
 		// Use canvas element if supported
 		if($('<canvas>').get(0).getContext)
-			self.elements.tip += '<canvas height="'+self.options.style.tip.size.height+'" width="'+self.options.style.tip.size.width+'"></canvas>';
+			tip = '<canvas height="'+self.options.style.tip.size.height+'" width="'+self.options.style.tip.size.width+'"></canvas>';
 
 		// Canvas not supported - Use VML (IE)
 		else if($.browser.msie)
@@ -1325,23 +1325,23 @@
 			path += ' xe';
 
 			// Create VML element
-			self.elements.tip += '<v:shape fillcolor="'+color+'" stroked="false" filled="true" path="'+path+'" coordsize="'+coordsize+'" ' +
+			tip = '<v:shape fillcolor="'+color+'" stroked="false" filled="true" path="'+path+'" coordsize="'+coordsize+'" ' +
 				'style="width:'+self.options.style.tip.size.width+'px; height:'+self.options.style.tip.size.height+'px; ' +
 				'line-height:0.1px; display:inline-block; behavior:url(#default#VML); ' +
 				'vertical-align:'+((corner.search(/top/) !== -1) ? 'bottom' : 'top')+'"></v:shape>';
 
 			// Create a phantom VML element (IE won't show the last created VML element otherwise)
-			self.elements.tip += '<v:image style="behavior:url(#default#VML);"></v:image>';
+			tip += '<v:image style="behavior:url(#default#VML);"></v:image>';
 
 			// Prevent tooltip appearing above the content (IE z-index bug)
 			self.elements.contentWrapper.css('position', 'relative');
 		};
 
-		// Attach new tip to tooltip element
-		self.elements.tooltip.prepend(self.elements.tip + '</div>');
-
-		// Create element reference and draw the canvas tip (Delayed til after DOM creation)
+		// Create element reference and append vml/canvas
 		self.elements.tip = self.elements.tooltip.find('.'+self.options.style.classes.tip).eq(0);
+		self.elements.tip.html(tip);
+
+		// Draw the canvas tip (Delayed til after DOM creation)
 		if($('<canvas>').get(0).getContext)
 			drawTip.call(self, self.elements.tip.find('canvas:first'), coordinates, color);
 
