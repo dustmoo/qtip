@@ -1555,7 +1555,12 @@
 			clearTimeout(self.timers.hide);
 
 			// Start show timer
-			self.timers.show = setTimeout(function(){ self.show(event); }, self.options.show.delay);
+			if(self.options.show.delay > 0) {
+				self.timers.show = setTimeout(function(){ self.show(event); }, self.options.show.delay);
+			}
+			else {
+				self.show(event);
+			}
 		};
 
 		// Define hide event method
