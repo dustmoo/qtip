@@ -475,16 +475,16 @@
 
 					// Calculate correct target corner position
 					newPosition = $.extend({}, target.position);
-					if(target.corner.search(/right/i) !== -1)
+					if((/right/i).test(target.corner))
 						newPosition.left += target.dimensions.width;
 
-					if(target.corner.search(/bottom/i) !== -1)
+					if((/bottom/i).test(target.corner))
 						newPosition.top += target.dimensions.height;
 
-					if(target.corner.search(/((top|bottom)Middle)|center/) !== -1)
+					if((/((top|bottom)Middle)|center/).test(target.corner))
 						newPosition.left += (target.dimensions.width / 2);
 
-					if(target.corner.search(/((left|right)Middle)|center/) !== -1)
+					if((/((left|right)Middle)|center/).test(target.corner))
 						newPosition.top += (target.dimensions.height / 2);
 				}
 
@@ -497,16 +497,16 @@
 				};
 
 				// Calculate correct target corner position
-				if(tooltip.corner.search(/right/i) !== -1)
+				if((/right/i).test(tooltip.corner))
 					newPosition.left -= tooltip.dimensions.width;
 
-				if(tooltip.corner.search(/bottom/i) !== -1)
+				if((/bottom/i).test(tooltip.corner))
 					newPosition.top -= tooltip.dimensions.height;
 
-				if(tooltip.corner.search(/((top|bottom)Middle)|center/) !== -1)
+				if((/((top|bottom)Middle)|center/).test(tooltip.corner))
 					newPosition.left -= (tooltip.dimensions.width / 2);
 
-				if(tooltip.corner.search(/((left|right)Middle)|center/) !== -1)
+				if((/((left|right)Middle)|center/).test(tooltip.corner))
 					newPosition.top -= (tooltip.dimensions.height / 2);
 
 				// Setup IE adjustment variables (Pixel gap bugs)
@@ -516,31 +516,31 @@
 				// Adjust for border radius
 				if(self.options.style.border.radius > 0)
 				{
-					if(tooltip.corner.search(/Left/) !== -1)
+					if((/Left/i).test(tooltip.corner))
 						newPosition.left -= self.options.style.border.radius;
-					else if(tooltip.corner.search(/Right/) !== -1)
+					else if((/Right/i).test(tooltip.corner))
 						newPosition.left += self.options.style.border.radius;
 
-					if(tooltip.corner.search(/Top/) !== -1)
+					if((/Top/i).test(tooltip.corner))
 						newPosition.top -= self.options.style.border.radius;
-					else if(tooltip.corner.search(/Bottom/) !== -1)
+					else if((/Bottom/i).test(tooltip.corner))
 						newPosition.top += self.options.style.border.radius;
 				};
 
 				// IE only adjustments (Pixel perfect!)
 				if(ieAdjust)
 				{
-					if(tooltip.corner.search(/top/) !== -1)
+					if((/top/i).test(tooltip.corner))
 						newPosition.top -= ieAdjust
-					else if(tooltip.corner.search(/bottom/) !== -1)
+					else if((/bottom/i).test(tooltip.corner))
 						newPosition.top += ieAdjust
 
-					if(tooltip.corner.search(/left/) !== -1)
+					if((/left/i).test(tooltip.corner))
 						newPosition.left -= ieAdjust
-					else if(tooltip.corner.search(/right/) !== -1)
+					else if((/right/i).test(tooltip.corner))
 						newPosition.left += ieAdjust
 
-					if(tooltip.corner.search(/leftMiddle|rightMiddle/) !== -1)
+					if((/leftMiddle|rightMiddle/).test(tooltip.corner))
 						newPosition.top -= 1
 				};
 
@@ -556,8 +556,8 @@
 					else
 						mouseAdjust = self.options.position.corner.tooltip;
 
-					newPosition.left += (mouseAdjust.search(/right/i) !== -1) ? -6 : 6;
-					newPosition.top += (mouseAdjust.search(/bottom/i) !== -1) ? -6 : 6;
+					newPosition.left += ((/right/i).test(mouseAdjust)) ? -6 : 6;
+					newPosition.top += ((/bottom/i).test(mouseAdjust)) ? -6 : 6;
 				}
 
 				// Initiate bgiframe plugin in IE6 if tooltip overlaps a select box or object element
@@ -619,11 +619,12 @@
 					return $.fn.qtip.log.error.call(self, 2, $.fn.qtip.constants.TOOLTIP_NOT_RENDERED, 'updateWidth');
 
 				// Make sure supplied width is a number and if not, return
-				else if(newWidth && typeof newWidth !== 'number')
+				else if(newWidth != undefined && typeof newWidth !== 'number')
 					return $.fn.qtip.log.error.call(self, 2, 'newWidth must be of type number', 'updateWidth');
 
 				// Setup elements which must be hidden during width update
 				var hidden = self.elements.contentWrapper.siblings().add(self.elements.tip).add(self.elements.button),
+					zoom = self.elements.wrapper.add(self.elements.contentWrapper.children()),
 					tooltip = self.elements.tooltip,
 					max = self.options.style.width.max,
 					min = self.options.style.width.min;
@@ -645,11 +646,11 @@
 
 						// Set position and zoom to defaults to prevent IE hasLayout bug
 						if($.browser.msie){
-							self.elements.wrapper.add(self.elements.contentWrapper.children()).css({ zoom: 'normal' });
+							zoom.css({ zoom: '' });
 						}
 
 						// Find current width
-						newWidth = self.getDimensions().width + 1;
+						newWidth = self.getDimensions().width;
 
 						// Make sure its within the maximum and minimum width boundries
 						if(!self.options.style.width.value) {
@@ -677,10 +678,7 @@
 				if($.browser.msie)
 				{
 					// Reset position and zoom to give the wrapper layout (IE hasLayout bug)
-					self.elements.wrapper.add(self.elements.contentWrapper.children()).css({ zoom: '1' });
-
-					// Set the new width
-					self.elements.wrapper.width(newWidth);
+					zoom.css({ zoom: 1 });
 
 					// Adjust BGIframe height and width if enabled
 					if(self.elements.bgiframe) self.elements.bgiframe.width(newWidth).height(self.getDimensions.height);
@@ -797,10 +795,7 @@
 				// Content is a regular string, insert the new content
 				else self.elements.content.html(content);
 
-				// Check if images need to be loaded before position is updated to prevent mis-positioning
-				loadedImages = 0; images = self.elements.content.find('img');
-			if(images.length)
-			{
+				// Use preload plugin if available
 				if($.fn.qtip.preload)
 				{
 					images.each(function()
@@ -812,27 +807,19 @@
 					afterLoad();
 				}
 
-				// Make sure all iamges are loaded before proceeding with position update
-				else images.bind('load error', function() { if(++loadedImages === images.length) afterLoad(); });
-			}
-				else afterLoad();
+				// Update the tooltip width
+				self.updateWidth();
 
-				function afterLoad()
+				// If repositioning is enabled, update positions
+				if(reposition !== false)
 				{
-					// Update the tooltip width
-					self.updateWidth();
+					// Update position if tooltip isn't static
+					if(self.options.position.type !== 'static')
+						self.updatePosition(self.elements.tooltip.is(':visible'), true);
 
-					// If repositioning is enabled, update positions
-					if(reposition !== false)
-					{
-						// Update position if tooltip isn't static
-						if(self.options.position.type !== 'static')
-							self.updatePosition(self.elements.tooltip.is(':visible'), true);
-
-						// Reposition the tip if enabled
-						if(self.options.style.tip.corner !== false)
-							positionTip.call(self);
-					};
+					// Reposition the tip if enabled
+					if(self.options.style.tip.corner !== false)
+						positionTip.call(self);
 				};
 
 				// Call API method and log event
@@ -1111,7 +1098,7 @@
 		if($.browser.msie) self.elements.wrapper.add(self.elements.content).css({ zoom: 1 });
 
 		// Setup tooltip attributes
-		if(self.options.hide.when.event.search(/unfocus/i) || self.options.hide.when.event == 'unfocus') self.elements.tooltip.attr('unfocus', true);
+		if((/unfocus/i).test(self.options.hide.when.event)) self.elements.tooltip.attr('unfocus', true);
 
 		// If an explicit width is set, updateWidth prior to setting content to prevent dirty rendering
 		if(typeof self.options.style.width.value == 'number') self.updateWidth();
@@ -1214,7 +1201,7 @@
 		for(i in coordinates)
 		{
 			// Create shape container
-			containers[i] = '<div rel="'+i+'" style="'+((i.search(/Left/) !== -1) ? 'left' : 'right') + ':0; ' +
+			containers[i] = '<div rel="'+i+'" style="'+((/Left/).test(i) ? 'left' : 'right') + ':0; ' +
 				'position:absolute; height:'+radius+'px; width:'+radius+'px; overflow:hidden; line-height:0.1px; font-size:1px">';
 
 			// Canvas is supported
@@ -1226,8 +1213,8 @@
 			{
 				size = radius * 2 + 3;
 				containers[i] += '<v:arc stroked="false" fillcolor="'+color+'" startangle="'+coordinates[i][0]+'" endangle="'+coordinates[i][1]+'" ' +
-					'style="width:'+size+'px; height:'+size+'px; margin-top:'+((i.search(/bottom/) !== -1) ? -2 : -1)+'px; ' +
-					'margin-left:'+((i.search(/Right/) !== -1) ? coordinates[i][2] - 3.5 : -1)+'px; ' +
+					'style="width:'+size+'px; height:'+size+'px; margin-top:'+((/bottom/).test(i) ? -2 : -1)+'px; ' +
+					'margin-left:'+((/Right/).test(i) ? coordinates[i][2] - 3.5 : -1)+'px; ' +
 					'vertical-align:top; display:inline-block; behavior:url(#default#VML)"></v:arc>';
 
 			};
@@ -1328,7 +1315,7 @@
 			tip = '<v:shape fillcolor="'+color+'" stroked="false" filled="true" path="'+path+'" coordsize="'+coordsize+'" ' +
 				'style="width:'+self.options.style.tip.size.width+'px; height:'+self.options.style.tip.size.height+'px; ' +
 				'line-height:0.1px; display:inline-block; behavior:url(#default#VML); ' +
-				'vertical-align:'+((corner.search(/top/) !== -1) ? 'bottom' : 'top')+'"></v:shape>';
+				'vertical-align:'+((/top/).test(corner) ? 'bottom' : 'top')+'"></v:shape>';
 
 			// Create a phantom VML element (IE won't show the last created VML element otherwise)
 			tip += '<v:image style="behavior:url(#default#VML);"></v:image>';
@@ -1346,7 +1333,7 @@
 			drawTip.call(self, self.elements.tip.find('canvas:first'), coordinates, color);
 
 		// Fix IE small tip bug
-		if(corner.search(/top/) !== -1 && $.browser.msie && parseInt($.browser.version.charAt(0)) === 6)
+		if((/top/).test(corner) && $.browser.msie && parseInt($.browser.version.charAt(0)) === 6)
 			self.elements.tip.css({ marginTop: -4 });
 
 		// Set the tip position
@@ -1384,48 +1371,48 @@
 		self.elements.tip.css(corner.match(/left|right|top|bottom/)[0], 0);
 
 		// Set position of tip to correct side
-		if(corner.search(/top|bottom/) !== -1)
+		if((/top|bottom/).test(corner))
 		{
 			// Adjustments for IE6 - 0.5px border gap bug
 			if($.browser.msie)
 			{
 				if(parseInt($.browser.version.charAt(0)) === 6)
-					positionAdjust = (corner.search(/top/) !== -1) ? -3 : 1;
+					positionAdjust = ((/top/).test(corner)) ? -3 : 1;
 				else
-					positionAdjust = (corner.search(/top/) !== -1) ? 1 : 2;
+					positionAdjust = ((/top/).test(corner)) ? 1 : 2;
 			};
 
-			if(corner.search(/Middle/) !== -1)
+			if((/Middle/).test(corner))
 				self.elements.tip.css({ left: '50%', marginLeft: -(self.options.style.tip.size.width / 2) });
 
-			else if(corner.search(/Left/) !== -1)
+			else if((/Left/).test(corner))
 				self.elements.tip.css({ left: self.options.style.border.radius - ieAdjust });
 
-			else if(corner.search(/Right/) !== -1)
+			else if((/Right/).test(corner))
 				self.elements.tip.css({ right: self.options.style.border.radius + ieAdjust });
 
-			if(corner.search(/top/) !== -1)
+			if((/top/).test(corner))
 				self.elements.tip.css({ top: -positionAdjust });
 			else
 				self.elements.tip.css({ bottom: positionAdjust });
 
 		}
-		else if(corner.search(/left|right/) !== -1)
+		else if((/left|right/).test(corner))
 		{
 			// Adjustments for IE6 - 0.5px border gap bug
 			if($.browser.msie)
-				positionAdjust = (parseInt($.browser.version.charAt(0)) === 6) ? 1 : ((corner.search(/left/) !== -1) ? 1 : 2);
+				positionAdjust = (parseInt($.browser.version.charAt(0)) === 6) ? 1 : ((/left/).test(corner) ? 1 : 2);
 
-			if(corner.search(/Middle/) !== -1)
+			if((/Middle/).test(corner))
 				self.elements.tip.css({ top: '50%', marginTop: -(self.options.style.tip.size.height / 2) });
 
-			else if(corner.search(/Top/) !== -1)
+			else if((/Top/).test(corner))
 				self.elements.tip.css({ top: self.options.style.border.radius - ieAdjust });
 
-			else if(corner.search(/Bottom/) !== -1)
+			else if((/Bottom/).test(corner))
 				self.elements.tip.css({ bottom: self.options.style.border.radius + ieAdjust });
 
-			if(corner.search(/left/) !== -1)
+			if((/left/).test(corner))
 				self.elements.tip.css({ left: -positionAdjust });
 			else
 				self.elements.tip.css({ right: positionAdjust });
@@ -1433,7 +1420,7 @@
 
 		// Adjust tooltip padding to compensate for tip
 		paddingCorner = 'padding-' + corner.match(/left|right|top|bottom/)[0];
-		paddingSize = self.options.style.tip.size[ (paddingCorner.search(/left|right/) !== -1) ? 'width' : 'height' ];
+		paddingSize = self.options.style.tip.size[ (/left|right/).test(paddingCorner) ? 'width' : 'height' ];
 		self.elements.tooltip.css('padding', 0);
 		self.elements.tooltip.css(paddingCorner, paddingSize);
 
@@ -1570,7 +1557,7 @@
 
 			// Prevent hiding if tooltip is fixed and event target is the tooltip
 			if(self.options.hide.fixed === true
-			&& self.options.hide.when.event.search(/mouse(out|leave)/i) !== -1
+			&& (/mouse(out|leave)/i).test(self.options.hide.when.event)
 			&& $(event.relatedTarget).parents('div.qtip[qtip]').length > 0)
 			{
 				// Prevent default and popagation
@@ -1617,7 +1604,7 @@
 		};
 
 		// Focus the tooltip on mouseover
-		if(self.options.position.type.search(/(fixed|absolute)/) !== -1)
+		if((/(fixed|absolute)/).test(self.options.position.type))
 			self.elements.tooltip.bind('mouseover.qtip', self.focus);
 
 		// If mouse is the target, update tooltip position on mousemove
@@ -1659,10 +1646,10 @@
 
 		// Determine new positioning properties
 		adjust = {
-			left: (overflow.left && (tooltip.corner.search(/right/i) != -1 || (tooltip.corner.search(/right/i) == -1 && !overflow.right))),
-			right: (overflow.right && (tooltip.corner.search(/left/i) != -1 || (tooltip.corner.search(/left/i) == -1 && !overflow.left))),
-			top: (overflow.top && tooltip.corner.search(/top/i) == -1),
-			bottom: (overflow.bottom && tooltip.corner.search(/bottom/i) == -1)
+			left: (overflow.left && ((/right/i).test(tooltip.corner) || !overflow.right)),
+			right: (overflow.right && ((/left/i).test(tooltip.corner) || !overflow.left)),
+			top: (overflow.top && !(/top/i).test(tooltip.corner)),
+			bottom: (overflow.bottom && !(/bottom/i).test(tooltip.corner))
 		};
 
 		// Tooltip overflows off the left side of the screen
@@ -1745,9 +1732,9 @@
 		styleObj = $.extend(true, {}, style);
 		for(i in styleObj)
 		{
-			if(sub === true && i.search(/(tip|classes)/i) !== -1)
+			if(sub === true && (/(tip|classes)/i).test(i))
 				delete styleObj[i];
-			else if(!sub && i.search(/(width|border|tip|title|classes|user)/i) !== -1)
+			else if(!sub && (/(width|border|tip|title|classes|user)/i).test(i))
 				delete styleObj[i];
 		};
 
