@@ -1295,7 +1295,7 @@
 			'margin:0 auto; line-height:0.1px; font-size:1px;"></div>';
 
 		// Attach new tip to tooltip element
-		self.elements.tooltip.prepend(self.elements.tip + '</div>');
+		self.elements.tooltip.prepend(self.elements.tip);
 
 		// Use canvas element if supported
 		if($('<canvas>').get(0).getContext)
