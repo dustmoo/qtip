@@ -31,6 +31,11 @@ The compressed version contains the preload script just to keep your js calls to
 Changelog
 ---------
 
+2-5-2010
+
+* Upgraded the script to work with jQuery 1.4
+* Included various fixes from Craig for IE 8 as well as fixed some IE 8 bugs. (That I didn't add to the changelog. )
+
 12-8-2009
 
 * Fixed a bug, where the script was not accepting:
