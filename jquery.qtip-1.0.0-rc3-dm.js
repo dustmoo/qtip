@@ -15,6 +15,7 @@
 * ---Added Craigs opacity fix for to the afterShow function to prevent the tip opacity rendering
 * ---Raised the z-index to a higher maximum to prevent z-index conflicts
 * ---Added functionality so that unfocus can be used with other hide actions, i.e. unfocus and mouseout
+* ---Various IE fixes as well as jQuery 1.4.1 compatability updates.
 */
 (function($)
 {
@@ -796,16 +797,44 @@
 				else self.elements.content.html(content);
 
 				// Use preload plugin if available
-				if($.fn.qtip.preload)
+				// Check if images need to be loaded before position is updated to prevent mis-positioning
+				loadedImages = 0; 
+				images = self.elements.content.find('img');
+				if(images.length)
 				{
-					images.each(function()
+					if($.fn.qtip.preload)
 					{
-						// Use preloaded image dimensions to prevent incorrect positioning
-						preloaded = $('body > img[src="'+$(this).attr('src')+'"]:first');
-						if(preloaded.length > 0) $(this).attr('width', preloaded.innerWidth()).attr('height', preloaded.innerHeight());
-					});
-					afterLoad();
+						images.each(function()
+						{
+							// Use preloaded image dimensions to prevent incorrect positioning
+							preloaded = $('body > img[src="'+$(this).attr('src')+'"]:first');
+							if(preloaded.length > 0) $(this).attr('width', preloaded.innerWidth()).attr('height', preloaded.innerHeight());
+						});
+						afterLoad();
+					}
+
+					// Make sure all iamges are loaded before proceeding with position update
+					else images.bind('load error', function() { if(++loadedImages === images.length) afterLoad(); });
 				}
+	            else afterLoad();
+				
+				
+				function afterLoad(){
+               	// Update the tooltip width
+	               self.updateWidth();
+
+	               // If repositioning is enabled, update positions
+	               if(reposition !== false)
+	               {
+	                  // Update position if tooltip isn't static
+	                  if(self.options.position.type !== 'static')
+	                     self.updatePosition(self.elements.tooltip.is(':visible'), true);
+
+	                  // Reposition the tip if enabled
+	                  if(self.options.style.tip.corner !== false)
+	                     positionTip.call(self);
+	               };
+	            };
 
 				// Update the tooltip width
 				self.updateWidth();
