@@ -1742,8 +1742,12 @@
 		{
 			// Determine new corner properties
 			adjustedPosition.corner = new String(tooltip.corner);
-			if(newCorner.x !== false) adjustedPosition.corner = adjustedPosition.corner.replace(/Left|Right|Middle/, newCorner.x);
-			if(newCorner.y !== false) adjustedPosition.corner = adjustedPosition.corner.replace(/top|bottom/, newCorner.y);
+			if (adjustedPosition.corner.match(/^(right|left)/)) {
+				if(newCorner.x !== false) adjustedPosition.corner = adjustedPosition.corner.replace(/(left|right)/, newCorner.x.toLowerCase());
+			} else {
+				if(newCorner.x !== false) adjustedPosition.corner = adjustedPosition.corner.replace(/Left|Right|Middle/, newCorner.x);
+				if(newCorner.y !== false) adjustedPosition.corner = adjustedPosition.corner.replace(/top|bottom/, newCorner.y);
+			}
 
 			// Adjust tip if position has changed and tips are enabled
 			if(adjustedPosition.corner !== self.elements.tip.attr('rel'))
