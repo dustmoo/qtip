@@ -28,7 +28,7 @@
 		if(typeof options == 'string')
 		{
 			// Make sure API data exists if requested
-			if(typeof $(this).data('qtip') !== 'object')
+			if($.isPlainObject($(this).data('qtip')))
 				$.fn.qtip.log.error.call(self, 1, $.fn.qtip.constants.NO_TOOLTIP_PRESENT, false);
 
 			// Return requested object
@@ -136,7 +136,7 @@
 				$.fn.qtip.interfaces[id] = obj;
 
 				// Check if element already has qTip data assigned
-				if(typeof $(this).data('qtip') == 'object')
+				if($.isPlainObject($(this).data('qtip')))
 				{
 					// Set new current interface id
 					if(typeof $(this).attr('qtip') === 'undefined')
