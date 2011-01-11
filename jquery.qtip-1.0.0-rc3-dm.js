@@ -126,7 +126,7 @@
 				id = $.fn.qtip.interfaces.length;
 				for(i = 0; i < id; i++)
 				{
-					if(typeof $.fn.qtip.interfaces[i] == 'undefined'){ id = i; break; };
+					if(typeof $(this).data('qtip') === 'object' && $(this).data('qtip'));
 				};
 
 				// Instantiate the tooltip
@@ -1510,7 +1510,7 @@
 		{
 			// Define events which reset the 'inactive' event handler
 			inactiveEvents = ['click', 'dblclick', 'mousedown', 'mouseup', 'mousemove',
-			'mouseout', 'mouseenter', 'mouseleave', 'mouseover' ];
+			'mouseout', 'mouseenter', 'mouseleave', 'mouseover', 'touchstart' ];
 
 			// Define 'inactive' event timer method
 			function inactiveMethod(event)
@@ -1951,8 +1951,25 @@
 			}
 			, 100);
 		})
-
+ 
 		// Hide unfocus toolipts on document mousedown
+		$(document).bind('touchstart.qtip', function(event)
+		{
+			if($(event.target).parents('div.qtip').length === 0)
+			{
+				$('.qtip[unfocus]').each(function()
+				{
+					var api = $(this).qtip("api");
+
+					// Only hide if its visible and not the tooltips target
+					if($(this).is(':visible') && !api.status.disabled
+					&& $(event.target).add(api.elements.target).length > 1)
+						api.hide(event);
+				})
+			};
+		})
+		
+		
 		$(document).bind('mousedown.qtip', function(event)
 		{
 			if($(event.target).parents('div.qtip').length === 0)
